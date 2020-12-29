@@ -8,6 +8,7 @@ import './styles/Main.css'
 
 
 function App() {
+  const [devs, setDevs] = useState([])
 
   const [github_username, setGithubUsername] = useState('')
   const [techs, setTechs] = useState('')
@@ -33,6 +34,16 @@ function App() {
     )
   },[])
 
+  useEffect(() => {
+    async function loadDevs(){
+      const response = await api.get('/devs')
+
+      setDevs(response.data)
+    }
+
+    loadDevs()
+  }, [])
+
   async  function handleAddDev(e) {
     e.preventDefault()
 
@@ -43,7 +54,8 @@ function App() {
       longitude,
     })
 
-    console.log(response.data)
+    setGithubUsername('')
+    setTechs('')
   }
 
   return (
@@ -51,7 +63,7 @@ function App() {
       <aside>
         
         <strong>Cadastrar</strong>
-        <form action="">
+        <form onSubmit={handleAddDev}>
           <div className="input-block">
             <label htmlFor="github_username">Usuário do GitHub</label>
             <input 
@@ -108,43 +120,20 @@ function App() {
       
       <main>
         <ul>
+          {devs.map(dev => (
+            <li key={dev._id} className="dev-item">
+              <header>
+                <img src={dev.avatar_url} alt={dev.name}/>
+                <div className="user-info">
+                  <strong>{dev.name}</strong>
+                  <span>{dev.techs.join(', ')}</span>
+                </div>
+              </header>
+              <p>{dev.bio}</p>
+              <a href={`https://github.com/${dev.github_username}`}>Acessar perfil no github</a>
+            </li>
+          ))}
           
-          <li className="dev-item">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/12676148?s=460&u=504ebfc6d45040522a5dfbb5e8446a32b6aea105&v=4" alt=""/>
-              <div className="user-info">
-                <strong>Vander Lima</strong>
-                <span>ReactJS, React Native,  Node.Js</span>
-              </div>
-            </header>
-            <p>CTO na @Rocketseat. Apaixonado pelas melhores Tecnologias</p>
-            <a href="https://github.com/vanderL">Acessar perfil no github</a>
-          </li>
-
-          <li className="dev-item">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/12676148?s=460&u=504ebfc6d45040522a5dfbb5e8446a32b6aea105&v=4" alt=""/>
-              <div className="user-info">
-                <strong>Vander Lima</strong>
-                <span>ReactJS, React Native,  Node.Js</span>
-              </div>
-            </header>
-            <p>CTO na @Rocketseat. Apaixonado pelas melhores Tecnologias</p>
-            <a href="https://github.com/vanderL">Acessar perfil no github</a>
-          </li>
-
-          <li className="dev-item">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/12676148?s=460&u=504ebfc6d45040522a5dfbb5e8446a32b6aea105&v=4" alt=""/>
-              <div className="user-info">
-                <strong>Vander Lima</strong>
-                <span>ReactJS, React Native,  Node.Js</span>
-              </div>
-            </header>
-            <p>CTO na @Rocketseat. Apaixonado pelas melhores Tecnologias</p>
-            <a href="https://github.com/vanderL">Acessar perfil no github</a>
-          </li>
-
 
         </ul>
       </main>
